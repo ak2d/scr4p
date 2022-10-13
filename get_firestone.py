@@ -3,6 +3,39 @@ import string
 import random
 import json
 import datetime
+import csv
+
+
+url = "https://data.anfr.fr/api/datasets/2.0/DATASETID/id=mesures-sondes-autonomes"
+response = requests.get(url)
+outjson = json.loads(response.text)
+
+for i in outjson["result"]["extras"]:
+    if i["key"] == "file_csv":
+        url = i["value"]
+
+response = requests.get(url)
+output = response.text
+ligne = output.split("\n")
+
+already = []
+for li in ligne:
+    if len(li.split(";")) > 6:
+        name = li.split(";")[6]
+        if name not in already and name != "numero":
+            already.append(name)
+
+headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Host': 'data.nantesmetropole.fr', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15', 'Accept-Language': 'fr-FR,fr;q=0.9', 'Accept-Encoding': 'gzip, deflate, br', 'Connection': 'keep-alive'}
+url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_capteurs-ondes-electomagnetiques-nantes-metropole&q=&sort=extractjson_date&facet=name&facet=address"
+response = requests.get(url, headers = headers)
+outjson = json.loads(response.text)
+
+for records in outjson["facet_groups"]:
+    for facets in records["facets"]:
+        if facets["name"].startswith("Nantes"):
+            if facets["name"] not in already and facets["name"] != "name":
+                already.append(facets["name"])
+
 
 def gen_zx():
     zx = ""
@@ -53,6 +86,7 @@ output = output[output.find("\n")+1:]
 size = int(output[output.rfind("[[")+2:output.rfind(",[")])
 
 last = ""
+rows = []
 
 for i in range(1,size+1):
     if last == "":
@@ -68,28 +102,30 @@ for i in range(1,size+1):
                 if data["documentChange"].get("document") != None:
                     if data["documentChange"]["document"].get("fields") != None:
                         if data["documentChange"]["document"]["fields"].get("exem_id") != None:
-                            site = data["documentChange"]["document"]["fields"]["exem_id"]["stringValue"]
-                            id = data["documentChange"]["document"]["fields"]["id"]["stringValue"]
-                            current_value = data["documentChange"]["document"]["fields"]["current_value"]["doubleValue"]
-                            min_value = data["documentChange"]["document"]["fields"]["min_8_days"]["doubleValue"]
-                            average_value = data["documentChange"]["document"]["fields"]["avg_8_days"]["doubleValue"]
-                            max_value = data["documentChange"]["document"]["fields"]["max_8_days"]["doubleValue"]
-                            print ("#####Site : "+site+"#####\nID : "+id+"\nCurrent : "+str(current_value)+"\nMin : "+str(min_value)+"\nAverage : "+str(average_value)+"\nMax : "+str(max_value)+"\n")
+                            name = data["documentChange"]["document"]["fields"]["exem_id"]["stringValue"]
+                            if name not in already:
+                                id = data["documentChange"]["document"]["fields"]["id"]["stringValue"]
+                                current_value = data["documentChange"]["document"]["fields"]["current_value"]["doubleValue"]
+                                min_value = data["documentChange"]["document"]["fields"]["min_8_days"]["doubleValue"]
+                                average_value = data["documentChange"]["document"]["fields"]["avg_8_days"]["doubleValue"]
+                                max_value = data["documentChange"]["document"]["fields"]["max_8_days"]["doubleValue"]
+                                zip_code = data["documentChange"]["document"]["fields"]["zip_code"]["stringValue"]
+                                city = data["documentChange"]["document"]["fields"]["city"]["stringValue"]
+                                address = data["documentChange"]["document"]["fields"]["address"]["stringValue"]
+                                country = data["documentChange"]["document"]["fields"]["country"]["stringValue"]
+                                status = data["documentChange"]["document"]["fields"]["status"]["stringValue"]
+                                latitude = data["documentChange"]["document"]["fields"]["geolocation"]["mapValue"]["fields"]["latitude"]["doubleValue"]
+                                longitude = data["documentChange"]["document"]["fields"]["geolocation"]["mapValue"]["fields"]["longitude"]["doubleValue"]
+                                installation_date = data["documentChange"]["document"]["fields"]["installation_date"]["timestampValue"]
+                                print ("#####"+name+"#####\nID : "+id+"\nCurrent : "+str(current_value)+"\nMin : "+str(min_value)+"\nAverage : "+str(average_value)+"\nMax : "+str(max_value)+"\n")
+                                rows.append({'name': name, 'id': id, 'current_value': current_value, 'min_value': min_value, 'average_value': average_value, 'max_value': max_value, 'zip_code': zip_code, 'city': city, 'address': address, 'country': country, 'status': status, 'latitude': latitude, 'longitude': longitude, 'installation_date': installation_date})
         last = output.find("["+str(i))
 
-        
-        
-        
-    #list_debut.append(debut)
 
-#for i in range(len(list_debut)):
-    #debut = list_debut[i]
-    #fin = output[:list_debut[i+1]].rfind("]]")+2
-
-    #print ("\n\n\n\n\n\n"+output[debut:fin])
-
-
-#data = json.loads(output)
-
-#for d in data:
-    #print(d)
+print(rows)
+fieldnames = ['name', 'id', 'current_value', 'min_value', 'average_value', 'max_value', 'zip_code', 'city', 'address', 'country', 'status', 'latitude', 'longitude', 'installation_date']
+with open('/Users/mathiasguillemot/Documents/GitHub/scr4p/export.csv', 'w', encoding='UTF8', newline='') as f:
+    writer = csv.DictWriter(f, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(rows, delimiter=';')
+f.close()
