@@ -1,7 +1,7 @@
 from PyPDF2 import PdfFileReader
 import re
 
-f = PdfFileReader('cartoradio/RPUB_150497.pdf')
+f = PdfFileReader('RPUB_147347.pdf')
 
 def check_is_mesure_exist(o):
     for i in o:
@@ -14,7 +14,18 @@ def check_is_mesure_exist(o):
         if 'is_exist' in locals() and is_exist != None:
             return is_exist
                 
-        
+def regex_val(txt):
+    rawvalues = re.findall(r'[0-9]*\.?[0-9]* V\/m', txt)
+    #print(type(rawvalues))
+    #print(rawvalues)
+
+    values=[]
+    for i in rawvalues:
+        values.append(float(i[:-3]))
+    #print(type(values))
+    #print(values)
+    return values
+
 def get_mesure(fichier):
     signets = fichier.outline
 
@@ -40,21 +51,24 @@ def get_mesure(fichier):
         # txt.replace('\\', '"')
         # txt.replace('\\x0', 'f')
         #print(type(txt))
-        #print(txt)
+        print(txt)
 
-        
+        splited=str.splitlines(txt)
+        #print(splited)
+        result={}
+        for i in splited:
+            if "ORANGE" in i:
+                result["ORANGE"]=regex_val(i)
+            if "FREE" in i:
+                result["FREE"]=regex_val(i)
+            if "SFR" in i:
+                result["SFR"]=regex_val(i)
+            if "BOUYGUES" in i:
+                result["BOUYGUES"]=regex_val(i)
 
-        #print("wowowowowowowowowowowowo")
-        rawvalues = re.findall(r'[0-9]*\.?[0-9]* V\/m', txt)
-        #print(type(rawvalues))
-        #print(rawvalues)
-
-        values=[]
-        for i in rawvalues:
-            values.append(float(i[:-3]))
-        #print(type(values))
-        #print(values)
-        return values
+        print("wowowowowowowowowowowowo")
+        #print(result)
+        return(result)
         
 ab = get_mesure(f)
 print(ab)
