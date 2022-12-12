@@ -1,7 +1,7 @@
 from PyPDF2 import PdfFileReader
 import re
 
-f = PdfFileReader('RPUB_147347.pdf')
+f = PdfFileReader('RPUB_141825.pdf')
 
 def check_is_mesure_exist(o):
     for i in o:
@@ -53,18 +53,28 @@ def get_mesure(fichier):
         #print(type(txt))
         print(txt)
 
-        splited=str.splitlines(txt)
-        #print(splited)
         result={}
-        for i in splited:
-            if "ORANGE" in i:
-                result["ORANGE"]=regex_val(i)
-            if "FREE" in i:
-                result["FREE"]=regex_val(i)
-            if "SFR" in i:
-                result["SFR"]=regex_val(i)
-            if "BOUYGUES" in i:
-                result["BOUYGUES"]=regex_val(i)
+        if "rateurChamp" in txt:
+            splited=str.splitlines(txt)
+            #print(splited)
+            for i in splited:
+                if "ORANGE" in i:
+                    result["ORANGE"]=regex_val(i)
+                if "FREE" in i:
+                    result["FREE"]=regex_val(i)
+                if "SFR" in i:
+                    result["SFR"]=regex_val(i)
+                if "BOUYGUES" in i:
+                    result["BOUYGUES"]=regex_val(i)
+        else:
+            if "ORANGE" in txt:
+                result["ORANGE"]=regex_val(txt)
+            if "FREE" in txt:
+                result["FREE"]=regex_val(txt)
+            if "SFR" in txt:
+                result["SFR"]=regex_val(txt)
+            if "BOUYGUES" in txt:
+                result["BOUYGUES"]=regex_val(txt)
 
         print("wowowowowowowowowowowowo")
         #print(result)
