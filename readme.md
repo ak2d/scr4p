@@ -20,3 +20,11 @@ source venv/bin/activate # Use this command on bash
 .\venv\Scripts\activate # On Windows
 pip install -r requirements.txt
 ```
+
+## Usage 
+### Cartoradio
+
+```
+# anciennete va rechercher des mesures sur les X derniers jours
+python3 cartoradio/get_reports.py --anciennete 360   
+```
