@@ -22,8 +22,6 @@ elif os.path.isfile(file_path):
 else:
     raise RuntimeError("Le fichier {file_path} n'existe pas".format(file_path=file_path))
 
-output_path = os.path.join(HERE, "output_2.xlsx")
-
 y = input("Année à extraire (tapez juste entrée pour extraire toutes les valeurs) : ")
 y = y.rstrip()
 
@@ -38,6 +36,15 @@ else:
         print ("Extration des valeurs pour l'année {year}".format(year=str(year)))
     except:
         raise RuntimeError("L'année entrée n'est pas valide")
+
+current_datetime = datetime.datetime.now()
+str_current_datetime = str(current_datetime)
+if not year:
+    file_name = str_current_datetime+".xlsx"
+else:
+    file_name = str_current_datetime + "_" + str(year) + ".xlsx"
+
+output_path = os.path.join(HERE, file_name)
 
 excluded = []
 df_infos = pd.DataFrame({'ville': [], 'code_postal': [], 'numero': []})
@@ -164,8 +171,11 @@ for i in range(1,size+1):
 
         last = output.find("["+str(i))
 
-print(df_infos)
-print(df)
+#print(df_infos)
+#print(df)
+
 with pd.ExcelWriter(output_path) as writer:
     df_infos.to_excel(writer, sheet_name='Capteurs', index=False)
     df.to_excel(writer, sheet_name='Valeurs', index=False)
+
+print("Le fichier a été enregistré ici : {output_path}".format(output_path=output_path))
