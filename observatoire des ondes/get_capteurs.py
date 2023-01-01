@@ -10,10 +10,12 @@ import pandas as pd
 
 HERE = os.path.dirname(__file__)
 
+#Input du fichier en entrée
 file_name = input("Jeu de données initial (tapez juste entrée pour ignorer) : ")
 file_name = file_name.rstrip()
 file_path = os.path.join(HERE, file_name)
 
+#Vérification de la présence du fichier
 if file_name.rstrip() == '':
     print("Pas de fichier en entrée, extraction de tous les capteurs")
     file_path = False
@@ -22,9 +24,11 @@ elif os.path.isfile(file_path):
 else:
     raise RuntimeError("Le fichier {file_path} n'existe pas".format(file_path=file_path))
 
+#Input de l'année à extraire
 y = input("Année à extraire (tapez juste entrée pour extraire toutes les valeurs) : ")
 y = y.rstrip()
 
+#Vérification de la validité de l'année
 if y == '':
     year = False
     print("Extraction de toutes les valeurs")
@@ -37,15 +41,16 @@ else:
     except:
         raise RuntimeError("L'année entrée n'est pas valide")
 
+#Nom du fichier en output
 current_datetime = datetime.datetime.now()
 str_current_datetime = str(current_datetime)
 if not year:
-    file_name = str_current_datetime+".xlsx"
+    output_file_name = str_current_datetime+".xlsx"
 else:
-    file_name = str_current_datetime + "_" + str(year) + ".xlsx"
+    output_file_name = str_current_datetime + "_" + str(year) + ".xlsx"
+output_path = os.path.join(HERE, output_file_name)
 
-output_path = os.path.join(HERE, file_name)
-
+#Récupération des valeurs présentent dans le fichier en input
 excluded = []
 df_infos = pd.DataFrame({'ville': [], 'code_postal': [], 'numero': []})
 if file_path != False:
@@ -71,6 +76,9 @@ else:
 #print(df_infos)
 #print(df)
 
+
+
+############### REQUÊTE POUR RÉCUPÉRER TOUS LES CAPTEURS ###############
 def gen_zx():
     zx = ""
     for i in range(12):
@@ -107,10 +115,10 @@ after = datetime.datetime.now()
 
 temps = after-before
 
-print("Temps de la requête = "+str(temps))
-print("Header:")
-print(r.headers)
-print("Body:")
+#print("Temps de la requête = "+str(temps))
+#print("Header:")
+#print(r.headers)
+#print("Body:")
 #print(r.text[:1000])
 
 output = r.text
@@ -121,6 +129,7 @@ size = int(output[output.rfind("[[")+2:output.rfind(",[")])
 
 last = ""
 
+############### PARSE DU RÉSULTAT ###############
 for i in range(1,size+1):
     if last == "":
         last = output.find("["+str(i))
@@ -158,7 +167,7 @@ for i in range(1,size+1):
                                 headers_values = {"Accept": "application/json, text/plain, */*", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3","Connection": "keep-alive", "Host": "odo-prod.ey.r.appspot.com", "Origin": "https://www.observatoiredesondes.com", "Referer": "https://www.observatoiredesondes.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "TE": "trailers", "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:103.0) Gecko/20100101 Firefox/103.0"}
                                 url_values = "https://odo-prod.ey.r.appspot.com/public_datas/"+id
                                 r_values = requests.get(url_values, headers = headers_values)
-                                print(id)
+                                #print(id)
                                 output_values = base64.b64decode(r_values.text).decode()
                                 data = json.loads(output_values)
 
@@ -174,6 +183,7 @@ for i in range(1,size+1):
 #print(df_infos)
 #print(df)
 
+############### ÉCRITURE DANS LE FICHIER EXCEL ###############
 with pd.ExcelWriter(output_path) as writer:
     df_infos.to_excel(writer, sheet_name='Capteurs', index=False)
     df.to_excel(writer, sheet_name='Valeurs', index=False)
