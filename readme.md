@@ -28,3 +28,13 @@ pip install -r requirements.txt
 # anciennete va rechercher des mesures sur les X derniers jours
 python3 cartoradio/get_reports.py --anciennete 360   
 ```
+
+### Observatoire des ondes
+
+```
+# anciennete va rechercher des mesures sur les X derniers jours
+python3 ./observatoire\ des\ ondes/get_capteurs.py 
+Jeu de données initial (tapez juste entrée pour ignorer) : jeu_de_donnees_initial.xlsx
+Fichier /Users/mathiasguillemot/Documents/GitHub/scr4p/./observatoire des ondes/jeu_de_donnees_initial.xlsx en entrée
+Année à extraire (tapez juste entrée pour extraire toutes les valeurs) : 2020
+```
