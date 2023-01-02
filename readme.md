@@ -31,10 +31,11 @@ python3 cartoradio/get_reports.py --anciennete 360
 
 ### Observatoire des ondes
 
+Le jeu de données en input doit absolument avoir le même format que celui en exemple `./observatoire\ des\ ondes/jeu_de_donnees_initial.xlsx`.
 ```
 python3 ./observatoire\ des\ ondes/get_capteurs.py
 
 Jeu de données initial (tapez juste entrée pour ignorer) : jeu_de_donnees_initial.xlsx
 
-Année à extraire (tapez juste entrée pour extraire toutes les valeurs) :
+Année à extraire (tapez juste entrée pour extraire toutes les valeurs) : 2022
 ```
