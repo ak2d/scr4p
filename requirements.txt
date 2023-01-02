@@ -2,3 +2,10 @@ PyPDF2
 pandas
 requests
 tqdm
+string
+random
+json
+datetime
+csv
+base64
+os
