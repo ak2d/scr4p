@@ -31,7 +31,7 @@ python3 cartoradio/get_reports.py --anciennete 360
 
 ### Observatoire des ondes
 
-Le jeu de données en input doit absoluement avoir le même format que celui en exemple `./observatoire\ des\ ondes/get_capteurs.py`.
+Le jeu de données en input doit absoluement avoir le même format que celui en exemple `./observatoire\ des\ ondes/jeu_de_donnees_initial.xlsx`.
 ```
 python3 ./observatoire\ des\ ondes/get_capteurs.py
 
