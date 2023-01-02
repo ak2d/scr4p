@@ -163,7 +163,7 @@ for i in range(1,size+1):
                                 df_prov = pd.DataFrame({'ville': [city], 'code_postal': [zip_code], 'numero': [name]})
                                 df_infos = pd.concat([df_infos,df_prov])
 
-
+                                #REQUÊTE POUR RÉCUPÉRER TOUTES LES VALEURS D'UN CAPTEUR
                                 headers_values = {"Accept": "application/json, text/plain, */*", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3","Connection": "keep-alive", "Host": "odo-prod.ey.r.appspot.com", "Origin": "https://www.observatoiredesondes.com", "Referer": "https://www.observatoiredesondes.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "TE": "trailers", "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:103.0) Gecko/20100101 Firefox/103.0"}
                                 url_values = "https://odo-prod.ey.r.appspot.com/public_datas/"+id
                                 r_values = requests.get(url_values, headers = headers_values)
