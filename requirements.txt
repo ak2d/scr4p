@@ -1,10 +1,5 @@
-PyPDF2
+PyPDF2 == 2.12.1
 pandas
-requests
 tqdm
-string
-random
-json
-datetime
-base64
-os
+requests
+openpyxl
